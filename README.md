@@ -1,6 +1,4 @@
-
-<img src="https://github.com/mnlima/TaskLevel/assets/61300303/4e283123-24e5-4407-85e3-cf601823e7a3" alt="task_level" width="80"> # Task_Level
-
+ # <img src="https://github.com/mnlima/TaskLevel/assets/61300303/4e283123-24e5-4407-85e3-cf601823e7a3" alt="task_level" width="40">  Task_Level
 
 O Task_Level é um aplicativo desenvolvido em Flutter com a linguagem Dart, criado com o objetivo de estudar e explorar as possibilidades dessa tecnologia.
 
