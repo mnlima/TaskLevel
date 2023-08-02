@@ -13,3 +13,8 @@ O Task_Level é um aplicativo desenvolvido em Flutter com a linguagem Dart, cria
 - Atualização Automática: Ao tentar criar uma tarefa com o mesmo nome de uma já existente, os dados da tarefa existente são atualizados automaticamente.
 
 https://github.com/mnlima/TaskLevel/assets/61300303/2efd1ad9-5298-4139-b1c1-9fce88f1caae
+
+
+![Giff-Task_level1](https://github.com/mnlima/TaskLevel/assets/61300303/2c633609-3d08-4893-8dc0-b9b548a54963)
+![Giff-Task_Level2](https://github.com/mnlima/TaskLevel/assets/61300303/3e6b8a15-8e4d-46f9-b68c-18eefa0564f1)
+![Giff-Task_level3](https://github.com/mnlima/TaskLevel/assets/61300303/bf66604e-24c2-4506-b094-8e22d9cd3dae)
