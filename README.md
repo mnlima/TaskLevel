@@ -1,16 +1,17 @@
-# task_level
+# Task_Level
 
-A new Flutter project.
+![task_level](https://example.com/task_level.png)
 
-## Getting Started
+O Task_Level é um aplicativo desenvolvido em Flutter com a linguagem Dart, criado com o objetivo de estudar e explorar as possibilidades dessa tecnologia.
 
-This project is a starting point for a Flutter application.
+## Recursos Principais
 
-A few resources to get you started if this is your first Flutter project:
+- Crie tarefas facilmente: Ao clicar no botão "+" na parte inferior da tela, é possível criar uma nova tarefa.
+- Formulário de Cadastro: No formulário de cadastro, é necessário adicionar uma imagem, um nome e uma dificuldade à tarefa.
+- Escolha de Imagem: Utilizamos o plugin image_picker para permitir que o usuário selecione imagens diretamente da galeria do dispositivo.
+- Aumento de Experiência: Ao fazer o cadastro da tarefa, é possível incrementar a experiência/progresso daquela tarefa clicando no botão "UP".
+- Incremento Contínuo: Foi implementada uma funcionalidade que permite ao usuário incrementar continuamente a experiência ao manter pressionado o botão "UP".
+- Remoção de Tarefas: Ao arrastar a tarefa para a direita, é possível remover a tarefa da lista.
+- Atualização Automática: Ao tentar criar uma tarefa com o mesmo nome de uma já existente, os dados da tarefa existente são atualizados automaticamente.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+https://github.com/mnlima/TaskLevel/assets/61300303/2efd1ad9-5298-4139-b1c1-9fce88f1caae
