@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:task_level/components/task.dart';
 import 'package:task_level/data/task_dao.dart';
 import 'package:task_level/data/task_inherited.dart';
+import 'package:image_picker/image_picker.dart';
 
 class FormScreen extends StatefulWidget {
   const FormScreen({super.key, required this.taskContext});
@@ -15,8 +18,11 @@ class FormScreen extends StatefulWidget {
 class _FormScreenState extends State<FormScreen> {
   TextEditingController nameController = TextEditingController();
   TextEditingController difficultyController = TextEditingController();
-  TextEditingController imageController = TextEditingController();
+  String imagePath = '';
   final _formKey = GlobalKey<FormState>();
+
+  bool isImageSelected = false;
+  bool isSaveButtonPressed = false;
 
   bool valueValidator(String? value) {
     return (value != null && value.isEmpty) ? true : false;
@@ -28,6 +34,21 @@ class _FormScreenState extends State<FormScreen> {
 
   bool rangeValidator(String value) {
     return (int.parse(value) > 5 || int.parse(value) < 1) ? true : false;
+  }
+
+  Future<void> selecionarImagemGaleria() async {
+    final imagePicker = ImagePicker();
+    final pickedImage =
+        await imagePicker.pickImage(source: ImageSource.gallery);
+
+    if (pickedImage != null) {
+      // Aqui você pode usar a imagem selecionada
+      setState(() {
+        imagePath = pickedImage.path;
+        isImageSelected = true;
+        isSaveButtonPressed = false;
+      });
+    }
   }
 
   @override
@@ -70,50 +91,55 @@ class _FormScreenState extends State<FormScreen> {
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
                               width: 1,
-                              color: Color(0xFF8F969B),
+                              color: (!isImageSelected && isSaveButtonPressed)
+                                  ? Color(0xFFB64242)
+                                  : Color(0xFF8F969B),
                             ),
                           ),
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: Image.network(
-                              imageController.text,
-                              fit: BoxFit.cover,
-                              errorBuilder: (BuildContext context,
-                                  Object exception, StackTrace? stackTrace) {
-                                return Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 12,
-                                  ),
-                                  child:
-                                      Image.asset('assets/images/nophoto.png'),
-                                );
-                              },
-                            ),
-                          ),
+                              borderRadius: BorderRadius.circular(10),
+                              child: imagePath != null
+                                  ? Image.file(
+                                      File(imagePath),
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (BuildContext context,
+                                          Object exception,
+                                          StackTrace? stackTrace) {
+                                        return Padding(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 12,
+                                          ),
+                                          child: Image.asset(
+                                              'assets/images/nophoto.png'),
+                                        );
+                                      },
+                                    )
+                                  : Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 12,
+                                      ),
+                                      child: Image.asset(
+                                          'assets/images/nophoto.png'),
+                                    )),
                         ),
                       ),
+                      if (!isImageSelected && isSaveButtonPressed)
+                        Text(
+                          "Selecione uma imagem",
+                          style: TextStyle(color: Colors.red, fontSize: 16),
+                        ),
                       Padding(
                         padding: const EdgeInsets.symmetric(
                           vertical: 16,
                           horizontal: 40,
                         ),
-                        child: TextFormField(
-                          keyboardType: TextInputType.url,
-                          validator: (String? value) {
-                            return (valueValidator(value))
-                                ? 'Insira uma url de imagem!'
-                                : null;
+                        child: ElevatedButton(
+                          onPressed: () {
+                            selecionarImagemGaleria();
                           },
-                          onChanged: (text) {
-                            setState(() {});
-                          },
-                          controller: imageController,
-                          decoration: const InputDecoration(
-                            hintText: 'Imagem',
-                            fillColor: Colors.white,
-                            filled: true,
-                          ),
+                          child: Text('Abrir galeria'),
                         ),
                       ),
                       Padding(
@@ -160,19 +186,27 @@ class _FormScreenState extends State<FormScreen> {
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          if (_formKey.currentState!.validate()) {
+                          setState(() {
+                            isSaveButtonPressed = true;
+                          });
+                          if (_formKey.currentState!.validate() &&
+                              imagePath.isNotEmpty) {
                             // print(nameController.text);
                             // print(difficultyController.text);
-                            // print(imageController.text);
+                            // print(imagePath);
+                            int xp = 0;
+                            int nivel = 0;
                             TaskDao().save(Task(
                               nameController.text,
-                              imageController.text,
+                              imagePath,
                               int.parse(difficultyController.text),
+                              xp,
+                              nivel,
                             ));
 
                             // TaskInherited.of(widget.taskContext).newTask(
                             //   nameController.text,
-                            //   imageController.text,
+                            //   imagePath,
                             //   int.parse(difficultyController.text),
                             // );
 
@@ -181,7 +215,7 @@ class _FormScreenState extends State<FormScreen> {
                                 content: Text('Criando nova tarefa'),
                               ),
                             );
-                            Navigator.pop(context);
+                            Navigator.pop(context, true);
                           }
                         },
                         child: const Text('Adicionar'),

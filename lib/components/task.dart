@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:task_level/components/difficulty.dart';
 import 'package:task_level/data/task_dao.dart';
@@ -7,10 +10,15 @@ class Task extends StatefulWidget {
   final String nome;
   final String foto;
   int dificuldade;
-  Task(this.nome, this.foto, this.dificuldade, {super.key});
+  Task(this.nome, this.foto, this.dificuldade, this.xp, this.nivel,
+      {super.key});
 
   int xp = 0;
   int nivel = 1;
+
+  Task getTask() {
+    return Task(nome, foto, dificuldade, xp, nivel);
+  }
 
   @override
   State<Task> createState() => _TaskState();
@@ -24,9 +32,21 @@ class _TaskState extends State<Task> {
     4: const Color.fromARGB(255, 0, 182, 167),
     5: const Color.fromARGB(255, 0, 182, 143),
   };
-
-  bool assetsOrNetwork() {
-    return widget.foto.contains('http') ? false : true;
+  Timer? incrementTimer;
+  int miliSecond = 30;
+  incrementXpNivel() {
+    setState(() {
+      if (widget.xp >= widget.dificuldade * 11) {
+        setState(() {
+          widget.xp = 0;
+          widget.nivel++;
+        });
+      } else {
+        setState(() {
+          widget.xp++;
+        });
+      }
+    });
   }
 
   @override
@@ -54,19 +74,13 @@ class _TaskState extends State<Task> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Container(
-                      width: 92,
-                      height: 100,
-                      color: Colors.black12,
-                      child: assetsOrNetwork()
-                          ? Image.asset(
-                              widget.foto,
-                              fit: BoxFit.cover,
-                            )
-                          : Image.network(
-                              widget.foto,
-                              fit: BoxFit.cover,
-                            ),
-                    ),
+                        width: 92,
+                        height: 100,
+                        color: Colors.black12,
+                        child: Image.file(
+                          File(widget.foto),
+                          fit: BoxFit.cover,
+                        )),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
@@ -93,35 +107,37 @@ class _TaskState extends State<Task> {
                       child: SizedBox(
                         height: 52,
                         width: 52,
-                        child: ElevatedButton(
-                            onLongPress: () {
-                              TaskDao().delete(widget.nome);
-                            },
-                            onPressed: () {
-                              setState(() {
-                                if (widget.xp >= widget.dificuldade * 11) {
-                                  setState(() {
-                                    widget.xp = 0;
-                                    widget.nivel++;
-                                  });
-                                } else {
-                                  setState(() {
-                                    widget.xp++;
-                                  });
-                                }
-                              });
-                            },
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: const [
-                                Icon(Icons.arrow_drop_up),
-                                Text(
-                                  'UP',
-                                  style: TextStyle(fontSize: 12),
-                                )
-                              ],
-                            )),
+                        child: GestureDetector(
+                          onLongPressStart: (_) {
+                            incrementTimer = Timer.periodic(
+                              Duration(milliseconds: miliSecond),
+                              (timer) {
+                                incrementXpNivel();
+                              },
+                            );
+                          },
+                          onLongPressEnd: (_) {
+                            incrementTimer?.cancel();
+                            TaskDao().updateLevel(widget.getTask());
+                          },
+                          child: ElevatedButton(
+                              onPressed: () {
+                                incrementXpNivel();
+                                TaskDao().updateLevel(widget.getTask());
+                              },
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: const [
+                                  Icon(Icons.arrow_drop_up),
+                                  Text(
+                                    'UP',
+                                    style: TextStyle(fontSize: 12),
+                                  )
+                                ],
+                              )),
+                        ),
                       ),
                     )
                   ],
